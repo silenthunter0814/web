@@ -1,31 +1,58 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
     <head>
-        <meta charset="utf-8">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
-        <link href="styles/style.css" rel="stylesheet" />
-        <title>WEB 初学者指南</title>
+        <title>Test Suite</title>
+        <script>
+            function assert(value, desc) {
+                var li = document.createElement("li");
+                li.className = value ? "pass" : "fail";
+                li.appendChild(document.createTextNode(desc));
+                document.getElementById("results").appendChild(li);
+            }
+
+            function report(text) { assert(true, text); }
+            function fail(text) { assert(false, text); }
+            function pass(text) { assert(true, text); }
+        </script>
+        <style>
+            #results li.pass { color: green; }
+            #results li.fail { color: red; }
+        </style>
     </head>
     <body>
-        <h1>Mozilla 酷毙了</h1>
-        <img src="images/firefox.png" alt="The Firefox logo: a flaming fox surrounding the Earth.">
-        <p>在 Mozilla，我们是一个全球社区</p>
-        <ul>
-            <!-- changed to list in the tutorial -->
-            <li>技术人员</li>
-            <li>思想家</li>
-            <li>建设者</li>
-        </ul>
-        <p>共同努力保持 Internet 的活力和可访问性，以便全世界的人们都可以成为 Web 的知情贡献者和创建者。我们相信这种跨开放平台的人类协作行为对于个人成长和我们共同的未来至关重要。</p>
-        <p>共同努力保持 Internet 的活力和可访问性，以便全世界的人们都可以成为 Web 的知情贡献者和创建者。我们相信这种跨开放平台的人类协作行为对于个人成长和我们共同的未来至关重要。</p>
-        <p>
-            阅读 <a href="https://www.mozilla.org/en-US/about/manifesto/">Mozilla 宣言 </a>
-            ，进一步了解指导我们追求使命的价值观和原则。
-        </p>
-        <button>Change user</button>
-        <script src= "scripts/main.js"></script>
-        
-        <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-        <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+        <ul id="results"></ul>
+
+<script>
+function getJSON(url) {
+    return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+
+        request.open("GET", url);
+
+        request.onload = function() {
+            try {
+                if (this.status === 200) {
+                    resolve(JSON.parse(this.response));
+                    console.log(this);
+                } else {
+                    reject(this.status + " " + this.statusText);
+                }
+            } catch (e) {
+                reject(e.message);
+            }
+        };
+
+        request.onerror = function() {
+            reject(this.status + " " + this.statusText);
+        };
+
+        request.send();
+    });
+}
+
+getJSON("data/ninjas.json").then(ninjas => {
+    assert(ninjas !== null, "Ninjas obtained!");
+}).catch(e => fail("Shouldn't be here:" + e));
+</script>
     </body>
 </html>
