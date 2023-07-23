@@ -49,7 +49,7 @@ function getJSON(url) {
     });
 }
 
-Promise.all([getJSON("data/ninjas.json"),
+Promise.race([getJSON("data/ninjas.json"),
             getJSON("data/mapInfo.json"),
             getJSON("data/plan.json")])
     .then(ninja => {
