@@ -54,6 +54,7 @@ Promise.all([getJSON("data/ninjas.json"),
             getJSON("data/plan.json")])
     .then(ninja => {
         assert(ninja !== null, ninja.name + " responded first");
+        console.log(ninja);
     }).catch(error => fail("Failure!"));
 </script>
     </body>
