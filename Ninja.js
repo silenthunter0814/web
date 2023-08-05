@@ -1,6 +1,6 @@
 const ninja = "Yoshi";
-export const message = "hello";
+exports const message = "hello";
 
-export function sayHiToNinja() {
+exports function sayHiToNinja() {
     return message + " " + ninja;
 }
