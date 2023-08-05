@@ -1,4 +1,4 @@
-import * as ninjaModule from "./Ninja1.js";
+import * as ninjaModule from "./Ninjas.js";
 
 assert(ninjaModule.message === "Hello",
             "We can access the imported variable");
