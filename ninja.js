@@ -1,4 +1,4 @@
-import { message, sayHiToNinja } from "./Ninja1.js";
+import { message, sayHiToNinja } from "./Ninja.js";
 
 assert(message === "Hello",
       "We can access the imported variable");
