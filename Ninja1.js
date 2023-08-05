@@ -5,4 +5,4 @@ function sayHiToNinja() {
     return message + " " + ninja;
 }
 
-export { message, sayHiToNinja };
+exports { message, sayHiToNinja };
