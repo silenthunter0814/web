@@ -1,6 +1,9 @@
-const ninja = "Yoshi";
-export const message = "Hello";
+export default class Ninja {
+    constructor(name) {
+        this.name = name;
+    }
+}
 
-export function sayHiToNinja() {
-    return message + " " + ninja;
+export function compareNinjas(ninja1, ninja2) {
+    return ninja1.name === ninja2.name;
 }
