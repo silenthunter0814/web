@@ -1,10 +1,10 @@
 let input = document.getElementById("inputBox");
 let buttons = document.querySelectorAll("button");
 
-let string = "";
 let arr = Array.from(buttons);
 arr.forEach(button => {
     button.addEventListener('click', (e) =>{
+        let string = input.value;
         if (e.target.innerHTML == '=') {
             string = eval(string);
             input.value = string;
