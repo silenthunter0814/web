@@ -14,7 +14,7 @@ int main()
 {
     printf("Configuring local address ...\n");
     struct addrinfo hints;
-    memset(&hints, 0, sizeof(htins));
+    memset(&hints, 0, sizeof(hints));
     hints.ai_familly = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
