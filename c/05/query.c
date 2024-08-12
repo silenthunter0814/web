@@ -1,0 +1,82 @@
+#include <stdio.h>
+
+const unsigned char *
+print_name(const unsigned char *msg,
+           const unsigned char *p, const unsigned char *end);
+
+void print_dns_message(const char *message, int msg_length);
+
+int main()
+{
+    char dns_query[] = {
+        0xAB, 0xCD,                           /* ID */
+        0x01, 0x00,                           /* Recursion */
+        0x00, 0x01,                           /* QDCOUNT */
+        0x00, 0x00,                           /* ANCOUNT */
+        0x00, 0x00,                           /* NSCOUNT */
+        0x00, 0x00,                           /* ARCOUNT */
+        7, 'e', 'x', 'a', 'm', 'p', 'l', 'e', /* label */
+        3, 'c', 'o', 'm',                     /* label */
+        0,                                    /* End of name */
+        0x00, 0x01,                           /* QTYPE = A */
+        0x00, 0x01                            /* QCLASS */
+    };
+    printf("%d\n", (int)sizeof(dns_query));
+    return 0;
+}
+
+void print_dns_message(const char *message, int msg_length)
+{
+    if (msg_length < 12) {
+        fprintf(stderr, "Message is too short to be valid.\n");
+        return 1;
+    }
+
+    const unsigned char *msg = (const unsigned char *)message;
+
+    int i;
+    for (i = 0; i < msg_length; ++i) {
+        unsigned char r = msg[i];
+        printf("%02d:   %02X    %03d    '%c'\n", i, r, r, r);
+    }
+    printf("\n");
+
+    printf("ID = %0X %0X\n", msg[0], msg[1]);
+
+    const int qr = (msg[2] & 0x80) >> 7;
+    printf("QR = %d %s\n", qr, qr ? "response" : "query");
+
+    
+}
+
+const unsigned char *
+print_name(const unsigned char *msg,
+           const unsigned char *p, const unsigned char *end)
+{
+    if (p + 2 > end) {
+        fprintf(stderr, "End of message.\n");
+        exit(1);
+    }
+
+    if ((*p & 0xC0) == 0xC0) {
+        const int k = ((*p & 0x3F) << 8) + p[1];
+        p += 2;
+        printf(" (pointer %d) ", k);
+        print_name(msg, msg+k, end);
+        return p;
+    } else {
+        const int len = *p++;
+        if (p + len + 1 > end) {
+            fprintf(stderr, "End of message.\n");
+            exit(1);
+        }
+        printf ("%.*s", len, p);
+        p += len;
+        if (*p) {
+            printf(".");
+            return print_name(msg, p, end);
+        } else {
+            return p + 1;
+        }            
+    }
+}
