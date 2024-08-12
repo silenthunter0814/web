@@ -16,7 +16,7 @@ int main()
     printf("Creating socket...\n");
     int socket_listen;
     socket_listen = socket(bind_address->ai_family, 
-        bind_address->ai_socktype, bind_address->ai_protocal);
+        bind_address->ai_socktype, bind_address->ai_protocol);
     if (socket_listen < 0) {
         fprintf(stderr, "socket() failed. (%d)\n", errno);
         return 1;
