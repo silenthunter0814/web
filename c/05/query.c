@@ -119,6 +119,79 @@ void print_dns_message(const char *message, int msg_length)
             p += 2;
         }
     }
+
+    if (ancount || nscount || arcount) {
+        int i;
+        for (i = 0; i < ancount + nscount + arcount; ++i) {
+            if (p >= end) {
+                fprintf(stderr, "End of message.\n");
+                exit(1);
+            }
+
+            printf("Answer %2d\n", i + 1);
+            printf("  name: ");
+
+            p = print_name(msg, p, end);
+            printf("\n");
+
+            if (p + 10 > end) {
+                fprintf(stderr, "End of message.\n");
+                exit(1);
+            }
+
+            const int type = (p[0] << 8) + p[1];
+            printf("  type: %d\n", type);
+            p += 2;
+
+            const int qclass = (p[0] << 8) + p[1];
+            printf("  class: %d\n", qclass);
+            p += 2;
+
+            const unsigned int ttl = (p[0] << 24) + (p[1] << 16) + (p[2] << 8) + p[3];
+            printf("    ttl: %u\n", ttl);
+            p += 4;
+
+            const int rdlen = (p[0] << 8) + p[1];
+            printf("  rdlen: %d\n", rdlen);
+            p += 2;
+
+            if (p + rdlen > end) {
+                fprintf(stderr, "End of message.\n");
+                exit(1);
+            }
+            if (rdlen == 4 && type == 1) { /* A Record */
+                printf("Address ");
+                printf("%d.%d.%d.%d\n", p[0], p[1], p[2], p[3]);
+            } else if (type == 15 && rdlen > 3) { /* MX Record */
+                const int preference = (p[0] << 8) + p[1];
+                printf("  pref: %d\n", preference);
+                printf("MX: ");
+                print_name(msg, p+2, end);
+                printf("\n");
+            } else if (rdlen == 16 && type == 28) { /* AAAA Record */
+                printf("Address ");
+                int j;
+                for (j = 0; j < rdlen; j += 2) {
+                    printf("%02x%02x", p[j], p[j+1]);
+                    if (j + 2 < rdlen)
+                        printf(":");
+                }
+                printf("\n");
+            } else if (type == 16) { /* TXT Record */
+                printf("TXT: '%.*s'\n", rdlen - 1, p+1);
+            } else if (type == 5) { /* CNAME Record */
+                printf("CNAME: ");
+                print_name(msg, p, end);
+                printf("\n");
+            }
+            p += rdlen;
+        }
+    }
+    if (p != end) {
+        printf("There is some unread data left over.\n");
+    }
+
+    printf("\n");
 }
 
 const unsigned char *
