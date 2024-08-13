@@ -46,7 +46,23 @@ void print_dns_message(const char *message, int msg_length)
     const int qr = (msg[2] & 0x80) >> 7;
     printf("QR = %d %s\n", qr, qr ? "response" : "query");
 
+    const int opcode = (msg[2] & 0x78) >> 3;
+    printf("OPCODE = %d ", opcode);
+    switch (opcode) {
+        case 0: printf("standard\n"); break;
+        case 1: printf("reverse\n"); break;
+        case 2: printf("status\n"); break;
+        default: printf("?\n"); break;
+    }
     
+    const int aa = (msg[2] & 0x04) >> 2;
+    printf("AA = %d %s\n", aa, aa ? "authoritative" : "");
+
+    const int tc = (msg[2] & 0x02) >> 1;
+    printf("TC = %d %s\n", tc, tc ? "message truncated" : "");
+
+    const int rd = (msg[2] & 0x01);
+    printf ("RD = %d %s\n", rd, rd ? "recursion desired" : "");
 }
 
 const unsigned char *
