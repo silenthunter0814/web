@@ -6,7 +6,7 @@ char *url = "http://www.example.com:80/res/page1.php?user=bob#account";
 
 int main()
 {
-    char *hostname, *port, I*path;
+    char *hostname, *port, *path;
     parse_url(url, &hostname, &port, &path);
     return 0;
 }
@@ -28,7 +28,7 @@ void parse_url(char *url, char **hostname, char **port, char **path) {
 
     if (protocol) {
         if (strcmp(protocol, "http")) {
-            fprintf(stderr, "Unknown protocol '%s'. Only 'http' is supported.\n", prototol);
+            fprintf(stderr, "Unknown protocol '%s'. Only 'http' is supported.\n", protocol);
             exit(1);
         }
     }
