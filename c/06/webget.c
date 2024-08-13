@@ -2,7 +2,7 @@
 
 void parse_url(char *url, char **hostname, char **port, char **path);
 
-char *url = "http://www.example.com:80/res/page1.php?user=bob#account";
+char url[] = "http://www.example.com:80/res/page1.php?user=bob#account";
 
 int main()
 {
