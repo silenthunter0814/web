@@ -117,7 +117,7 @@ void print_dns_message(const char *message, int msg_length)
 {
     if (msg_length < 12) {
         fprintf(stderr, "Message is too short to be valid.\n");
-        return 1;
+        exit(1);
     }
 
     const unsigned char *msg = (const unsigned char *)message;
