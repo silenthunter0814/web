@@ -28,7 +28,7 @@ void parse_url(char *url, char **hostname, char **port, char **path) {
 
     if (protocol) {
         if (strcmp(protocol, "http")) {
-            fprintf(stderr, "Unknown protocol '%s'. Only 'http' is supported.\n");
+            fprintf(stderr, "Unknown protocol '%s'. Only 'http' is supported.\n", prototol);
             exit(1);
         }
     }
