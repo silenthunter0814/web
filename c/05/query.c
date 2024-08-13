@@ -54,7 +54,27 @@ int main(int arc, char *argv[[)
         return 1;
     }
 
-    
+    char query[1024] = {
+        0xAB, 0xCD,    /* ID */
+        0x01, 0x00,    /* Set recursion */
+        0x00, 0x01,    /* QDCOUNT */
+        0x00, 0x00,    /* ANCOUNT */
+        0x00, 0x00,    /* NSCOUNT */
+        0x00, 0x00,    /* ARCOUNT */
+    };
+
+    char *p = query + 12;
+    char *h = argv[1];
+
+    while (*h) {
+        char *len = p++;
+        if (h != argv[1])
+            ++h;
+        while (*h && *h != '.')
+            *p++ = *h++;
+        *len = p - len - 1;
+    }
+    *p++ = 0;
     
     return 0;
 }
