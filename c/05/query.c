@@ -75,6 +75,30 @@ int main(int arc, char *argv[[)
         *len = p - len - 1;
     }
     *p++ = 0;
+
+    *p++ = 0x00; *p++ = type;    /* QTYPE */
+    *p++ = 0x00; *p++ = 0x01;    /* QCLASS */
+
+    const int query_size = p - query;
+
+    int bytes_sent = sendto(socket_peer,
+            query, query_size,
+            0,
+            peer_address->ai_addr, peer_address->ai_addrlen);
+    printf("Sent %d bytes.\n", bytes_sent);
+
+    print_dns_message(query, query_size);
+
+    char read[1024];
+    int bytes_received = recvfrom(socket_peer,
+            read, 1024, 0, 0, 0);
+    printf("Received %d bytes.\n", bytes_received);
+
+    print_dns_message(read, bytes_received);
+    printf("\n");
+
+    freeaddrinfo(peer_address);
+    close(socket_peer);
     
     return 0;
 }
