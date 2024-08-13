@@ -6,22 +6,35 @@ print_name(const unsigned char *msg,
 
 void print_dns_message(const char *message, int msg_length);
 
-int main()
+int main(int arc, char *argv[[)
 {
-    char dns_query[] = {
-        0xAB, 0xCD,                           /* ID */
-        0x01, 0x00,                           /* Recursion */
-        0x00, 0x01,                           /* QDCOUNT */
-        0x00, 0x00,                           /* ANCOUNT */
-        0x00, 0x00,                           /* NSCOUNT */
-        0x00, 0x00,                           /* ARCOUNT */
-        7, 'e', 'x', 'a', 'm', 'p', 'l', 'e', /* label */
-        3, 'c', 'o', 'm',                     /* label */
-        0,                                    /* End of name */
-        0x00, 0x01,                           /* QTYPE = A */
-        0x00, 0x01                            /* QCLASS */
-    };
-    printf("%d\n", (int)sizeof(dns_query));
+    if (argc < 3) {
+        printf("Usage:\n\tdns_query hostname type\n");
+        printf("Example:\n\tdns_query example.com aaaa\n");
+        exit(0);
+    }
+
+    if (strlen(argv[1]) > 255) {
+        fprintf(stderr, "Hostname too long.");
+        exit(1);
+    }
+
+    unsigned char type;
+    if (strcmp(argv[2], "a") == 0) {
+        type = 1;
+    } else if (strcmp(argv[2], "mx") == 0) {
+        type = 15;
+    } else if (strcmp(argv[2], "txt") == 0) {
+        type = 16;
+    } else if (strcmp(argv[2], "aaaa") == 0) {
+        type = 28;
+    } else if (strcmp(argv[2], "any") == 0) {
+        type = 255;
+    } else {
+        fprintf(stderr, "Unknown type '%s'. Use a, aaaa, txt, mx, or any.", argv[2]);
+        exit(1);
+    }
+    
     return 0;
 }
 
