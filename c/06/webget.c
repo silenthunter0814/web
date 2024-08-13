@@ -44,6 +44,7 @@ void parse_url(char *url, char **hostname, char **port, char **path) {
         *path = p + 1;
     *p = 0;
 
+    ++p;
     while (*p && *p != '#')
         ++p;
     if (*p == '#')
