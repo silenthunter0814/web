@@ -91,6 +91,34 @@ void print_dns_message(const char *message, int msg_length)
 
     const unsigned char *p = msg + 12;
     const unsigned char *end = msg + msg_length;
+
+    if (qdcount) {
+        int i;
+        for (i = 0; i < qdcount; ++i) {
+            if (p >= end) {
+                fprintf(stderr, "End of message.\n");
+                exit(1);
+            }
+            printf("Query %2d\n", i + 1);
+            printf("  name: ");
+
+            p = print_name(msg, p, end);
+            printf("\n");
+
+            if (p + 4 > end) {
+                fprintf(stderr, "End of message.\n");
+                exit(1);
+            }
+
+            const int type = (p[0] << 8) + p[1];
+            printf("  type: %d\n", type);
+            p += 2;
+
+            const int qclass = [p[0] << 8) + p[1];
+            printf("  class: %d\n", qclass);
+            p += 2;
+        }
+    }
 }
 
 const unsigned char *
