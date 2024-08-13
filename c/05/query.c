@@ -63,6 +63,21 @@ void print_dns_message(const char *message, int msg_length)
 
     const int rd = (msg[2] & 0x01);
     printf ("RD = %d %s\n", rd, rd ? "recursion desired" : "");
+
+    if (qr) {
+        const int rcode = msg[3] & 0x07;
+        printf("RCODE = %d ", rcode);
+        switch (rcode) {
+            case 0: printf("sucess\n"); break;
+            case 1: printf("format error\n"); break;
+            case 2: printf("server failure\n"); break;
+            case 3: printf("name error\n"); break;
+            case 4: printf("not implemented\n"); break;
+            case 5: printf("refused\n"); break;
+            default: printf("?\n"); break;
+        }
+        if (rcode != 0) return;
+    }
 }
 
 const unsigned char *
