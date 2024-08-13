@@ -34,6 +34,27 @@ int main(int arc, char *argv[[)
         fprintf(stderr, "Unknown type '%s'. Use a, aaaa, txt, mx, or any.", argv[2]);
         exit(1);
     }
+
+    printf("Configuring remote address...\n");
+    struct addrinfo hints;
+    memset(hints, 0, sizeof(hints));
+    hints.ai_socktype = SOCK_DGRAM;
+    struct addrinfo *peer_address;
+    if (getaddrinfo("8.8.8.8", "53", &hints, &peer_address)) {
+        fprintf(stderr, "getaddrinfo() failed. (%d)\n", errno);
+        return 1;
+    }
+
+    printf("Creating socket...\n");
+    int socket_peer;
+    socket_peer = socket(peer_address->ai_family,
+        peer_address->ai_socktype, peer_address->ai_protocol);
+    if (socket_peer < 0) {
+        fprintf(stderr, "socket() failed. (%d)\n", errno);
+        return 1;
+    }
+
+    
     
     return 0;
 }
