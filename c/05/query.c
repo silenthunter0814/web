@@ -16,7 +16,7 @@ print_name(const unsigned char *msg,
 
 void print_dns_message(const char *message, int msg_length);
 
-int main(int arc, char *argv[[)
+int main(int argc, char *argv[])
 {
     if (argc < 3) {
         printf("Usage:\n\tdns_query hostname type\n");
@@ -47,7 +47,7 @@ int main(int arc, char *argv[[)
 
     printf("Configuring remote address...\n");
     struct addrinfo hints;
-    memset(hints, 0, sizeof(hints));
+    memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_DGRAM;
     struct addrinfo *peer_address;
     if (getaddrinfo("8.8.8.8", "53", &hints, &peer_address)) {
@@ -202,7 +202,7 @@ void print_dns_message(const char *message, int msg_length)
             printf("  type: %d\n", type);
             p += 2;
 
-            const int qclass = [p[0] << 8) + p[1];
+            const int qclass = (p[0] << 8) + p[1];
             printf("  class: %d\n", qclass);
             p += 2;
         }
