@@ -78,6 +78,19 @@ void print_dns_message(const char *message, int msg_length)
         }
         if (rcode != 0) return;
     }
+    
+    const int qdcount = (msg[4] << 8) + msg[5];
+    const int ancount = (msg[6] << 8) + msg[7];
+    const int nscount = (msg[8] << 8) + msg[9];
+    const int arcount = (msg[10] << 8) + msg[11];
+
+    printf("QDCOUNT = %d\n", qdcount);
+    printf("ANCOUNT = %d\n", ancount);
+    printf("NSCOUNT = %d\n", nscount);
+    printf("ARCOUNT = %d\n", arcount);
+
+    const unsigned char *p = msg + 12;
+    const unsigned char *end = msg + msg_length;
 }
 
 const unsigned char *
