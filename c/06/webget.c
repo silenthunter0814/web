@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <clock.h>
+#include <time.h>
 
 void parse_url(char *url, char **hostname, char **port, char **path);
 void send_request(int s, char *hostname, char *port, char *path);
