@@ -11,6 +11,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
+#include <time.h>
+
+void get_input(const char *prompt, char *buffer);
+void send_format(int server, const char *text, ...);
+int parse_response(const char *response);
+void wait_on_response(int server, int expecting);
+int connect_to_host(const char *hostname, const char *port);
 
 #define MAXINPUT 512
 #define MAXRESPONSE 1024
@@ -47,6 +54,7 @@ int main(int argc, char *argv[])
     send_format(server, "From:<%s>\r\n", sender);
     send_format(server, "To:<%s>\r\n", recipient);
     send_format(server, "Subject:%s\r\n", subject);
+    void wait_on_response(int server, int expecting);
 
     time_t timer;
     time(&timer);
@@ -55,7 +63,7 @@ int main(int argc, char *argv[])
     timeinfo = gmtime(&timer);
 
     char date[128];
-    strftime(date, "%a, %d %b %Y %H:%M:%S +0000", timeinfo);
+    strftime(date, 128, "%a, %d %b %Y %H:%M:%S +0000", timeinfo);
 
     send_format(server, "Date:%s\r\n", date);
 
@@ -83,13 +91,14 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-int connect_to_host(const char *hostname, const char *port) {
+int connect_to_host(const char *hostname, const char *port)
+{
     printf("Configuring remote address...\n");
     struct addrinfo hints;
     memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
     struct addrinfo *peer_address;
-    if (getaddrinfo(hostname, port, &hint, &peer_address)) {
+    if (getaddrinfo(hostname, port, &hints, &peer_address)) {
         fprintf(stderr, "getaddrinfo() failed. (%d)\n", errno);
         exit(1);
     }
@@ -97,7 +106,7 @@ int connect_to_host(const char *hostname, const char *port) {
     printf("Remote address is: ");
     char address_buffer[100];
     char service_buffer[100];
-    getnameinfo(peer_address->ai_addr, peer_address->ai_addlen,
+    getnameinfo(peer_address->ai_addr, peer_address->ai_addrlen,
             address_buffer, sizeof(address_buffer),
             service_buffer, sizeof(service_buffer),
             NI_NUMERICHOST);
@@ -123,7 +132,8 @@ int connect_to_host(const char *hostname, const char *port) {
     return server;
 }
 
-void wait_on_response(int server, int expecting) {
+void wait_on_response(int server, int expecting)
+{
     char response[MAXRESPONSE+1];
     char *p = response;
     char *end = response + MAXRESPONSE;
@@ -158,13 +168,14 @@ void wait_on_response(int server, int expecting) {
     printf("S: %s", response);
 }
 
-int parse_response(const char *response) {
+int parse_response(const char *response)
+{
     const char *k = response;
     if (!k[0] || !k[1] || !k[2]) return 0;
     for (; k[3]; ++k) {
         if (k == response || k[-1] == '\n') {
             if (isdigit(k[0]) && isdigit(k[1]) && isdigit(k[2])) {
-                if (k[3] != '-' {
+                if (k[3] != '-') {
                     if (strstr(k, "\r\n")) {
                         return strtol(k, 0, 10);
                     }
@@ -175,7 +186,8 @@ int parse_response(const char *response) {
     return 0;
 }
 
-void send_format(int server, const char *text, ...) {
+void send_format(int server, const char *text, ...)
+{
     char buffer[1024];
     va_list args;
     va_start(args, text);
