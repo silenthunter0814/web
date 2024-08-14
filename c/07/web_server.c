@@ -16,6 +16,7 @@ struct client_info *get_client(int s);
 void drop_client(struct client_info *client);
 const char *get_client_address(struct client_info *ci);
 fd_set wait_on_clients(int server);
+void send_400(struct client_info *client);
 
 #define MAX_REQUEST_SIZE 2047
 
@@ -34,6 +35,15 @@ int main(int argc, char *argv[])
 {
 
     return 0;
+}
+
+void send_400(struct client_info *client) {
+    const char *c400 =
+        "HTTP/1.1 400 Bad Request\r\n"
+        "Connection: close\r\n"
+        "Content-Length: 11\r\n\r\nBad Request";
+    send(client->socket, c400, strlen(c400), 0);
+    drop_client(client);
 }
 
 fd_set wait_on_clients(int server) {
