@@ -15,6 +15,7 @@ int create_socket(const char* host, const char *port);
 struct client_info *get_client(int s);
 void drop_client(struct client_info *client);
 const char *get_client_address(struct client_info *ci);
+fd_set wait_on_clients(int server);
 
 #define MAX_REQUEST_SIZE 2047
 
@@ -33,6 +34,29 @@ int main(int argc, char *argv[])
 {
 
     return 0;
+}
+
+fd_set wait_on_clients(int server) {
+    fd_set reeads;
+    FD_ZERO(&reads);
+    FD_SET(server, &reads);
+    int max_socket = server;
+
+    struct client_info *ci = clients;
+
+    while (ci) {
+        FD_SET(ci->socket, &reads);
+        if (ci->socket > max_socket)
+            max_socket = ci->socket;
+        ci = ci->next;
+    }
+
+    if (select(max_socket+1, &reads, 0, 0, 0) < 0) {
+        fprintf(stderr, "select(() failed. (%d)\n", errno);
+        exit(1);
+    }
+
+    return reads;
 }
 
 const char *get_client_address(struct client_info *ci) {
