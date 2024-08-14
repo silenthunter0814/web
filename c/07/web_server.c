@@ -13,6 +13,17 @@
 const char *get_content_type(const char* path);
 int create_socket(const char* host, const char *port);
 
+#define MAX_REQUEST_SIZE 2047
+
+struct client_info {
+    socklen_t address_length;
+    struct sockaddr_storage address;
+    int socket;
+    char request[MAX_REQUEST_SIZE + 1];
+    int received;
+    struct client_info *next;
+};
+
 int main(int argc, char *argv[])
 {
 
