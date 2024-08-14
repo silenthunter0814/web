@@ -17,6 +17,7 @@ void drop_client(struct client_info *client);
 const char *get_client_address(struct client_info *ci);
 fd_set wait_on_clients(int server);
 void send_400(struct client_info *client);
+void send_404(struct client_info *client);
 
 #define MAX_REQUEST_SIZE 2047
 
@@ -35,6 +36,15 @@ int main(int argc, char *argv[])
 {
 
     return 0;
+}
+
+void send_404(struct client_info *client) {
+    const char *c404 =
+        "HTTP/1.1 404 Not Found\r\n"
+        "Connection: close\r\n"
+        "Content-Length: 9\r\n\r\nNot Found";
+    send(client->socket, c404, strlen(c404), 0);
+    drop_client(client);
 }
 
 void send_400(struct client_info *client) {
