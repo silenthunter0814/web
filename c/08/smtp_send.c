@@ -20,6 +20,41 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+void wait_on_response(int server, int expecting) {
+    char response[MAXRESPONSE+1];
+    char *p = response;
+    char *end = response + MAXRESPONSE;
+
+    int code = 0;
+
+    do {
+        int bytes_received = recv(server, p, end - p, 0);
+        if (bytes_received < 1) {
+            fprintf(stderr, "Connection dropped.\n");
+            exit(1);
+        }
+
+        p += bytes_received;
+        *p = 0;
+
+        if (p == end) {
+            fprintf(stderr, "Server response too large:\n");
+            fprintf(stderr, "%s", response);
+            exit(1);
+        }
+
+        code = parse_response(response);
+    } while (code == 0);
+
+    if (code != expecting) {
+        fprintf(stderr, "Error from server:\n");
+        fprintf(stderr, "%s", response);
+        exit(1);
+    }
+
+    printf("S: %s", response);
+}
+
 int parse_response(const char *response) {
     const char *k = response;
     if (!k[0] || !k[1] || !k[2]) return 0;
