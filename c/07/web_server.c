@@ -14,6 +14,7 @@ const char *get_content_type(const char* path);
 int create_socket(const char* host, const char *port);
 struct client_info *get_client(int s);
 void drop_client(struct client_info *client);
+const char *get_client_address(struct client_info *ci);
 
 #define MAX_REQUEST_SIZE 2047
 
@@ -32,6 +33,14 @@ int main(int argc, char *argv[])
 {
 
     return 0;
+}
+
+const char *get_client_address(struct client_info *ci) {
+    static char address_buffer[100];
+    getnameinfo((struct sockaddr *) &ci->address, ci->address_length,
+            address_buffer, sizeof(address_buffer), 0, 0,
+            NI_NUMERICHOST);
+    return address_buffer;
 }
 
 void drop_client(struct client_info *client) {
