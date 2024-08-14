@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
         if (FD_ISSET(server, &reads)) {
             struct client_info *client = get_client(-1);
             client->socket = accept(server,
-                    (struct sockaddr *) &(client->address)
+                    (struct sockaddr *) &(client->address),
                     &(client->address_length));
             if (client->socket < 0) {
                 fprintf(stderr, "accept() failed. (%d)\n", errno);
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
                         MAX_REQUEST_SIZE - client->received, 0);
                 if (r < 1) {
                     printf("Unexpected disconnect from %s.\n",
-                                get_client_address(client);
+                                get_client_address(client));
                     drop_client(client);
                 } else {
                     client->received += r;
@@ -115,7 +115,7 @@ void serve_resource(struct client_info *client, const char *path) {
     }
 
     if (strstr(path, "..")) {
-        send_404(cilent);
+        send_404(client);
         return;
     }
 
@@ -144,7 +144,7 @@ void serve_resource(struct client_info *client, const char *path) {
     sprintf(buffer, "Connection: close\r\n");
     send(client->socket, buffer, strlen(buffer), 0);
 
-    sprintf(buffer, "Content-Length: %u\r\n", cl);
+    sprintf(buffer, "Content-Length: %lu\r\n", cl);
     send(client->socket, buffer, strlen(buffer), 0);
 
     sprintf(buffer, "Content-Type: %s\r\n", ct);
@@ -234,7 +234,7 @@ struct client_info *get_client(int s) {
     struct client_info *ci = clients;
 
     while (ci) {
-        if (ck->socket == s)
+        if (ci->socket == s)
             break;
         ci = ci->next;
     }
@@ -265,7 +265,7 @@ int create_socket(const char* host, const char *port) {
 
     printf("Creating socket...\n");
     int socket_listen;
-    socket_listen = socket(bind_address->aifamily,
+    socket_listen = socket(bind_address->ai_family,
             bind_address->ai_socktype, bind_address->ai_protocol);
     if (socket_listen < 0) {
         fprintf(stderr, "socket() failed. (%d)\n", errno);
