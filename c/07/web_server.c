@@ -13,6 +13,7 @@
 const char *get_content_type(const char* path);
 int create_socket(const char* host, const char *port);
 struct client_info *get_client(int s);
+void drop_client(struct client_info *client);
 
 #define MAX_REQUEST_SIZE 2047
 
@@ -31,6 +32,24 @@ int main(int argc, char *argv[])
 {
 
     return 0;
+}
+
+void drop_client(struct client_info *client) {
+    close(client->socket);
+
+    struct client_info **p = &clients;
+
+    while (*p) {
+        if (*p == client) {
+            *p = client->next;
+            free(client);
+            return;
+        }
+        p = &(*p)->next;
+    }
+
+    fprintf(stderr, "drop_client no found.\n");
+    exit(1);
 }
 
 struct client_info *get_client(int s) {
