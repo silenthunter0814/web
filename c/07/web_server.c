@@ -35,6 +35,24 @@ static struct client_info *clients = 0;
 
 int main(int argc, char *argv[])
 {
+    int server = create_socket(0, "8080");
+
+    while (1) {
+        fd_set reads;
+        reads = wait_on_clients(server);
+        if (FD_ISSET(server, &reads)) {
+            struct client_info *client = get_client(-1);
+            client->socket = accept(server,
+                    (struct sockaddr *) &(client->address)
+                    &(client->address_length));
+            if (client->socket < 0) {
+                fprintf(stderr, "accept() failed. (%d)\n", errno);
+                return 1;
+            }
+
+            printf("New connection from %s.\n",
+                    get_client_address(client));
+        }
 
     return 0;
 }
@@ -117,7 +135,7 @@ void send_400(struct client_info *client) {
 }
 
 fd_set wait_on_clients(int server) {
-    fd_set reeads;
+    fd_set reads;
     FD_ZERO(&reads);
     FD_SET(server, &reads);
     int max_socket = server;
