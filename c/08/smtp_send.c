@@ -20,6 +20,18 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+void send_format(int server, const char *text, ...) {
+    char buffer[1024];
+    va_list args;
+    va_start(args, text);
+    vsprintf(buffer, text, args);
+    va_end(args);
+
+    send(server, buffer, strlen(buffer), 0);
+
+    printf("C: %s", buffer);
+}
+
 void get_input(const char *prompt, char *buffer)
 {
     printf("%s", prompt);
