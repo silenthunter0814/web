@@ -12,6 +12,7 @@
 
 const char *get_content_type(const char* path);
 int create_socket(const char* host, const char *port);
+struct client_info *get_client(int s);
 
 #define MAX_REQUEST_SIZE 2047
 
@@ -24,10 +25,34 @@ struct client_info {
     struct client_info *next;
 };
 
+static struct client_info *clients = 0;
+
 int main(int argc, char *argv[])
 {
 
     return 0;
+}
+
+struct client_info *get_client(int s) {
+    struct client_info *ci = clients;
+
+    while (ci) {
+        if (ck->socket == s)
+            break;
+        ci = ci->next;
+    }
+    if (ci) return ci;
+
+    struct client_info *n = 
+        (struct client_info*) calloc(1, sizeof(struct client_info));
+    if (!n) {
+        fprintf(stderr, "Out of memory.\n");
+        exit(1);
+    }
+    n->address_length = sizeof(n->address);
+    n->next = clients;
+    clients = n;
+    return n;
 }
 
 int create_socket(const char* host, const char *port) {
