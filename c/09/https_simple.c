@@ -19,5 +19,21 @@
 
 int main(int argc, char *argv[])
 {
+    SSL_library_init();
+    OpenSSL_add_all_algorithms();
+    SSL_load_error_strings();
+
+    SSL_CTX *ctx = SSL_CTX_new(TLS_client_method());
+    if (!ctx) {
+        fprintf(stderr, "SSL_CTX_new() failed.\n");
+        return 1;
+    }
+
+    if (argc < 3) {
+        fprintf(stderr, "usage: https_simple hostname port\n");
+        return 1;
+    }
+
+    char *hostname =
     return 0;
 }
