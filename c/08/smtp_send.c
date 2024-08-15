@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
     send_format(server, "From:<%s>\r\n", sender);
     send_format(server, "To:<%s>\r\n", recipient);
     send_format(server, "Subject:%s\r\n", subject);
-    void wait_on_response(int server, int expecting);
 
     time_t timer;
     time(&timer);
