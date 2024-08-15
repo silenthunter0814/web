@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     char recipient[MAXINPUT];
     get_input("to: ", recipient);
     send_format(server, "RCPT TO:<%s>\r\n", recipient);
+    wait_on_response(server, 250);
 
     send_format(server, "DATA\r\n");
     wait_on_response(server, 354);
