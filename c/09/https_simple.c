@@ -73,5 +73,24 @@ int main(int argc, char *argv[])
     freeaddrinfo(peer_address);
 
     printf("Connected.\n\n");
+
+    SSL *ssl = SSL_new(ctx);
+    if (!ctx) {
+        fprintf(stderr, "SSL_new() failed.\n");
+        return 1;
+    }
+
+    if (!SSL_set_tlsext_host_name(ssl, hostname)) {
+        fprintf(stderr, "SSL_set_tlsext_host_name() failed.\n");
+        ERR_print_errors_fp(stderr);
+        return 1;
+    }
+
+    SSL_set_fd(ssl, server);
+    if (SSL_connect(ssl) == -1) {
+        fprintf(stderr, "SSL_connect() failed.\n");
+        ERR_print_errors_fp(stderr);
+        return 1;
+    }
     return 0;
 }
