@@ -92,5 +92,26 @@ int main(int argc, char *argv[])
         ERR_print_errors_fp(stderr);
         return 1;
     }
+
+    printf("SSL/TLS using %s\n", SSL_get_cipher(ssl));
+
+    X509 *cert = SSL_get_peer_certificates(ssl);
+    if (!cert) {
+        fprintf(stderr, "SSL_get_peer_certificate() failed.\n");
+        return 1;
+    }
+
+    char *tmp;
+    if ((tmp = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0))) {
+        fprintf("subject: %s\n", tmp);
+        OPENSSL_free(tmp);
+    }
+
+    if ((tmp = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0))) {
+        printf("issuer: %s\n", tmp);
+        OPENSSL_free(tmp);
+    }
+
+    X509_free(cert);
     return 0;
 }
