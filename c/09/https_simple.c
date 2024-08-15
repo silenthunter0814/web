@@ -113,5 +113,35 @@ int main(int argc, char *argv[])
     }
 
     X509_free(cert);
+
+    char buffer[2048];
+
+    sprintf(buffer, "GET / HTTP/1.1\r\n");
+    sprintf(buffer + strlen(buffer), "Host: %s:%s\r\n", hostname, port);
+    sprintf(buffer + strlen(buffer), "Connection: close\r\n");
+    sprintf(buffer + strlen(buffer), "User-Agent: https_simple\r\n");
+    sprintf(buffer + strlen(buffer), "\r\n");
+
+    SSL_write(ssl, buffer, strlen(buffer));
+    printf("Sent Headers:\n%s", buffer);
+
+    while (1) {
+        int bytes_received = SSL_read(ssl, buffer, sizeof(buffer));
+        if (bytes_received < 1) {
+            printf("\nConnection close by peer.\n");
+            break;
+        }
+
+        printf("Received (%d bytes): '%.#s'\n",
+                bytes_received, bytes_received, buffer);
+    }
+
+    printf("\nClosing...\n");
+    SSL_shutdown(ssl);
+    close(server);
+    SSL_free(ssl);
+    SSL_CTX_free(ctx);
+
+    printf("Finished.\n");
     return 0;
 }
