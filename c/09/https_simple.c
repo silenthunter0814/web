@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
     struct addrinfo *peer_address;
-    if (getaddrinfo(hostname, port &hints, &peer_address)) {
+    if (getaddrinfo(hostname, port, &hints, &peer_address)) {
         fprintf(stderr, "getaddrinfo() failed. (%d)\n", errno);
         exit(1);
     }
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 
     printf("SSL/TLS using %s\n", SSL_get_cipher(ssl));
 
-    X509 *cert = SSL_get_peer_certificates(ssl);
+    X509 *cert = SSL_get_peer_certificate(ssl);
     if (!cert) {
         fprintf(stderr, "SSL_get_peer_certificate() failed.\n");
         return 1;
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
 
     char *tmp;
     if ((tmp = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0))) {
-        fprintf("subject: %s\n", tmp);
+        printf("subject: %s\n", tmp);
         OPENSSL_free(tmp);
     }
 
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
             break;
         }
 
-        printf("Received (%d bytes): '%.#s'\n",
+        printf("Received (%d bytes): '%.*s'\n",
                 bytes_received, bytes_received, buffer);
     }
 
