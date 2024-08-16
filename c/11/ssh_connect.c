@@ -36,6 +36,26 @@ int main(int argc, char *argv[])
 
     printf("Banner:\n%s\n", ssh_get_serverbanner(ssh));
 
+    /********************************************************************************/
+    ssh_key key;
+    if (ssh_get_server_publickey(ssh, &key) != SSH_OK) {
+        fprintf(stderr, "ssh_get_server_publickey() failed.\n%s\n",
+                ssh_get_error(ssh));
+        return -1;
+    }
+
+    unsigned char *hash;
+    size_t hash_len;
+    if (ssh_get_publickey_hash(key, SSH_PUBLICKEY_HASH_SHA1,&hash, &hash_len) != SSH_OK) {
+        fprintf(stderr, "ssh_get_publickey_hash() failed.\n%s\n",
+                ssh_get_error(ssh));
+        return -1;
+    }
+    
+    printf("Host public key hash:\n");
+    ssh_print_hash(SSH_PUBLICKEY_HASH_SHA1, hash, hash_len);
+
+    /*******************************************************************************/
     ssh_disconnect(ssh);
     ssh_free(ssh);
     
