@@ -20,6 +20,24 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    ssh_options_set(ssh, SSH_OPTION_HOST, hostname);
+    ssh_options_set(ssh, SSH_OPTION_PORT, &port);
+
+    int verbosity = SSH_LOG_PROTOCOL;
+    ssh_options_set(ssh, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
+
+    int ret = ssh_connect(ssh);
+    if (ret != SSH_OK) {
+        fprintf(stderr, "ssh_connect() failed.\n%s\n", ssh_get_error(ssh));
+        return 1;
+    }
+
+    printf("Connected to %s on port %d.\n", hostname, port);
+
+    printf("Banner:\n%s\n", ssh_get_serverbanner(ssh));
+
+    ssh_disconnect(ssh);
+    ssh_free(ssh);
     
     return 0;
 }
