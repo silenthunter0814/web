@@ -54,6 +54,20 @@ int main()
         fprintf(stderr, "socket() failed. (%d)\n", errno);
         return 1;
     }
+
+    printf("Binding socket to local address...\n");
+    if (bind(socket_listen, bind_address->ai_addr, bind_address->ai_addrlen)) {
+        fprintf(stderr, "bind() failed. (%d)\n", errno);
+        return 1;
+    }
+
+    freeaddrinfo(bind_address);
+
+    printf("Listening...\n");
+    if (listen(socket_listen, 10) < 0) {
+        fprintf(stderr, "listen() failed. (%d)\n", errno);
+        return 1;
+    }
     
     return 0;
 }
