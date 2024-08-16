@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    ssh_options_set(ssh, SSH_OPTION_HOST, hostname);
-    ssh_options_set(ssh, SSH_OPTION_PORT, &port);
+    ssh_options_set(ssh, SSH_OPTIONS_HOST, hostname);
+    ssh_options_set(ssh, SSH_OPTIONS_PORT, &port);
 
     int verbosity = SSH_LOG_PROTOCOL;
     ssh_options_set(ssh, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
